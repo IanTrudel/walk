@@ -1,4 +1,5 @@
 ﻿require("rake")
+require("yaml")
 require("drb/drb")
 require("pp")
 
@@ -41,6 +42,10 @@ module Rake
    end
 end
 
+# Configuration loaded from YAML needs to be untainted to work with $SAFE security feature
+CONFIG = YAML.load_file("walkabout.yml")
+DRbSERVER = "druby://#{CONFIG['walkabout']['server']}:#{CONFIG['walkabout']['port']}".untaint
+
 Dir.glob("recipes/**/*.rake").sort.each { |recipe|
    puts "Loading #{File.basename(recipe)}" #if Rake.application.options.trace
    load recipe
@@ -48,5 +53,5 @@ Dir.glob("recipes/**/*.rake").sort.each { |recipe|
 
 $SAFE = 1  # Running sandbox, disable eval()
 
-DRb.start_service("druby://localhost:8787", Rake.application)
+DRb.start_service(DRbSERVER, Rake.application)
 DRb.thread.join

@@ -1,0 +1,5 @@
+# Walkabout Configuration
+
+walkabout:
+   server: localhost
+   port: 8787

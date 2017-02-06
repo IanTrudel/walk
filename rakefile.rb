@@ -1,10 +1,14 @@
 ﻿require("rake")
+require("yaml")
 require("drb/drb")
 require("pp")
 
+CONFIG = YAML.load_file("walkabout.yml")
+DRbSERVER = "druby://#{CONFIG['walkabout']['server']}:#{CONFIG['walkabout']['port']}"
+
 DRb.start_service
 
-walkabout = DRbObject.new_with_uri("druby://localhost:8787")
+walkabout = DRbObject.new_with_uri(DRbSERVER)
 
 walkabout.tasks.each { |task|
    walkabout[task].reenable
